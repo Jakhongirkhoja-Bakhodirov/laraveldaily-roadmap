@@ -1,7 +1,12 @@
 <?php
 
-use App\Http\Controllers\Api\V1\MyController;
+use App\Http\Controllers\Api\V1\CarController;
 use App\Http\Controllers\Api\V1\PostController;
+use App\Http\Controllers\Api\V1\ImageController;
+use App\Http\Controllers\Api\V1\MechanicController;
+use App\Http\Controllers\Api\V1\UserController;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,3 +35,26 @@ Route::get('/', function () {
 });
 
 Route::get('/posts/statics', [PostController::class, 'index']);
+
+Route::get('/posts/images', [ImageController::class, 'postsImages']);
+
+Route::get('/assign', function () {
+    $role = Role::find(1);
+    $role->users()->detach();
+    $role->users()->attach(2);
+
+    return response()->json([
+        'data' => [
+            'user' => User::find(1)->roles,
+            'role' => $role
+        ]
+    ], 200);
+});
+
+Route::apiResources([
+    'images' => ImageController::class,
+    'users' => UserController::class,
+    'posts' => PostController::class,
+    'mechanics' => MechanicController::class,
+    'cars' => CarController::class
+]);

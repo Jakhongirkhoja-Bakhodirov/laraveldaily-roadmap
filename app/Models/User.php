@@ -47,4 +47,35 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    public function oldestPost()
+    {
+        return $this->hasOne(Post::class)->oldestOfMany();
+    }
+
+
+    public function latestPost()
+    {
+        return $this->hasOne(Post::class)->latestOfMany();
+    }
+
+    public function currentPost()
+    {
+        return $this->hasOne(Post::class)->ofMany([
+            'created_at' => 'max',
+            'id' => 'max'
+        ], function ($query) {
+            $query->where('created_at', '<', now());
+        });
+    }
+
+    public function image()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 }
