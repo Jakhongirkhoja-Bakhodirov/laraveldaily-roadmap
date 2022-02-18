@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -41,6 +42,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        //       'is_admin' => 'boolean'
     ];
 
     public function posts()
@@ -77,5 +79,15 @@ class User extends Authenticatable
     public function roles()
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    public function getNameEmailAttribute()
+    {
+        return "{$this->name}  {$this->email}";
+    }
+
+    public function setNameUpperAttribute($value)
+    {
+        $this->attributes['name_upper'] = Str::upper($value);
     }
 }

@@ -53,8 +53,16 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $user->mergeCasts([
+            'is_admin' => 'integer'
+        ]);
+        $user->is_admin = 12;
+        $user->name_upper = 'sas';
         return response()->json([
             'data' => [
+                'user' => $user,
+                'name_upper' => $user->name_upper,
+                'name-email' => $user->name_email,
                 'user-images' => $user->image,
                 'user-posts' => $user->posts,
                 'latest-post' => $user->latestPost,
