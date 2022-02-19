@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProvisionServer;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Hash;
@@ -88,5 +89,7 @@ Route::post('/reset-password', function (Request $request) {
         ? redirect()->route('login')->with('status', __($status))
         : back()->withErrors(['email' => [__($status)]]);
 })->middleware('guest')->name('password.update');
+
+Route::post('/server', ProvisionServer::class);
 
 require __DIR__ . '/auth.php';
