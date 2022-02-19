@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordNotification;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail , CanResetPassword
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
@@ -89,5 +91,18 @@ class User extends Authenticatable
     public function setNameUpperAttribute($value)
     {
         $this->attributes['name_upper'] = Str::upper($value);
+    }
+
+    /**
+     * Send a password reset notification to the user.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $url = 'https://example.com/reset-password?token=' . $token;
+
+        $this->notify(new ResetPasswordNotification($url));
     }
 }
