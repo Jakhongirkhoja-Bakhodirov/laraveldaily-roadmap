@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\PodcastProcessed;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -31,7 +33,11 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return response()->json([
+            'data' => [
+                'user' => 'user'
+            ]
+        ], 200);
     }
 
     /**
@@ -42,7 +48,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = User::firstOrCreate([
+            'email' => $request->email
+        ], [
+            'name' => $request->name,
+            'password' => Hash::make($request->password),
+            'email' => $request->email
+        ]);
+
+        event(new PodcastProcessed($user));
+
+        return response()->json([
+            'data' => [
+                'user' => $user
+            ]
+        ], 200);
     }
 
     /**
